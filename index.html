@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dinamita POS — Mini</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <span class="logo">💥</span>
+    <h1>Dinamita POS — Mini</h1>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn" data-tab="ventas">Ventas</button>
+    <button class="tab-btn" data-tab="productos">Productos</button>
+    <button class="tab-btn" data-tab="compras">Compras</button>
+    <button class="tab-btn" data-tab="clientes">Clientes</button>
+    <button class="tab-btn" data-tab="reportes">Reportes</button>
+    <button class="tab-btn" data-tab="config">Config</button>
+  </nav>
+</header>
+
+<main>
+  <!-- VENTAS -->
+  <section id="ventas" class="tab active">
+    <div class="panel">
+      <div class="row">
+        <input id="buscador" placeholder="Buscar por nombre o SKU..." />
+        <input id="barcode" placeholder="Escáner de código de barras (Enter)" />
+      </div>
+      <div id="resultados" class="grid"></div>
+      <div class="cart">
+        <h3>Carrito</h3>
+        <table id="carritoTabla">
+          <thead><tr><th>SKU</th><th>Producto</th><th>Cant</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="totales">
+          <div>Subtotal: $<span id="subtotal">0.00</span></div>
+          <div>IVA (0%): $<span id="iva">0.00</span></div>
+          <div class="total">TOTAL: $<span id="total">0.00</span></div>
+        </div>
+        <div class="row">
+          <select id="metodoPago">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <input id="recibido" type="number" step="0.01" placeholder="Recibido (solo efectivo)" />
+          <button id="btnCobrar">Cobrar (F2)</button>
+          <button id="btnCancelar">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section id="productos" class="tab">
+    <div class="panel">
+      <h2>Productos</h2>
+      <form id="formProducto" class="grid-form">
+        <input name="sku" placeholder="SKU" required />
+        <input name="nombre" placeholder="Nombre" required />
+        <input name="costo" type="number" step="0.01" placeholder="Costo" required />
+        <input name="precio" type="number" step="0.01" placeholder="Precio" required />
+        <input name="stock" type="number" step="1" placeholder="Stock" required />
+        <button>Guardar / Actualizar</button>
+      </form>
+      <div class="row">
+        <input id="buscarProductos" placeholder="Buscar..." />
+        <button id="exportProductos">Exportar CSV</button>
+      </div>
+      <table id="tablaProductos">
+        <thead><tr><th>SKU</th><th>Nombre</th><th>Costo</th><th>Precio</th><th>Stock</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- COMPRAS (entrada de inventario) -->
+  <section id="compras" class="tab">
+    <div class="panel">
+      <h2>Compras (Entrada)</h2>
+      <form id="formCompra" class="grid-form">
+        <input name="sku" placeholder="SKU existente" required />
+        <input name="cantidad" type="number" step="1" placeholder="Cantidad" required />
+        <input name="costo" type="number" step="0.01" placeholder="Costo unitario (opcional)" />
+        <button>Registrar Entrada</button>
+      </form>
+      <div id="logCompras" class="list"></div>
+    </div>
+  </section>
+
+  <!-- CLIENTES -->
+  <section id="clientes" class="tab">
+    <div class="panel">
+      <h2>Clientes</h2>
+      <form id="formCliente" class="grid-form">
+        <input name="id" placeholder="ID (auto si vacío)" />
+        <input name="nombre" placeholder="Nombre" required />
+        <input name="telefono" placeholder="Teléfono" />
+        <input name="email" placeholder="Email" />
+        <button>Guardar / Actualizar</button>
+      </form>
+      <div class="row">
+        <input id="buscarClientes" placeholder="Buscar..." />
+      </div>
+      <table id="tablaClientes">
+        <thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Email</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- REPORTES -->
+  <section id="reportes" class="tab">
+    <div class="panel">
+      <h2>Reportes</h2>
+      <div class="row">
+        <input id="desde" type="date" />
+        <input id="hasta" type="date" />
+        <button id="filtrarVentas">Filtrar</button>
+        <button id="exportVentas">Exportar Ventas CSV</button>
+      </div>
+      <table id="tablaVentas">
+        <thead><tr><th>Folio</th><th>Fecha</th><th>Método</th><th>Total</th><th>Items</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="config" class="tab">
+    <div class="panel">
+      <h2>Config</h2>
+      <form id="formConfig" class="grid-form">
+        <input name="negocio" placeholder="Nombre del Negocio" />
+        <input name="direccion" placeholder="Dirección (ticket)" />
+        <input name="telefono" placeholder="Teléfono (ticket)" />
+        <textarea name="pie" placeholder="Pie de ticket (ej. Gracias por su compra)"></textarea>
+        <button>Guardar</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- TICKET -->
+<section id="ticket" class="ticket">
+  <div class="ticket-paper" id="ticketPaper">
+    <div class="t-header">
+      <div id="t-negocio">Dinamita Gym</div>
+      <div id="t-direccion"></div>
+      <div id="t-telefono"></div>
+    </div>
+    <div id="t-folio"></div>
+    <div id="t-fecha"></div>
+    <table id="t-items">
+      <thead><tr><th>Cant</th><th>Desc</th><th>Precio</th><th>Sub</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="t-totales">
+      <div>Subtotal: $<span id="t-subtotal">0.00</span></div>
+      <div>IVA: $<span id="t-iva">0.00</span></div>
+      <div class="t-total">TOTAL: $<span id="t-total">0.00</span></div>
+      <div>Método: <span id="t-metodo"></span></div>
+    </div>
+    <div id="t-pie">Gracias por su compra en Dinamita Gym 💥</div>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>

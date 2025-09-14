@@ -1,0 +1,9 @@
+{
+  "name": "Dinamita POS — Mini",
+  "short_name": "Dinamita POS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f12",
+  "theme_color": "#e02424",
+  "icons": []
+}
