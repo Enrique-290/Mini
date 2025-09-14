@@ -1,6 +1,6 @@
 {
-  "name": "Dinamita POS — Mini v2",
-  "short_name": "Dinamita POS",
+  "name": "Dinamita POS — v3",
+  "short_name": "DinamitaPOS",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f0f12",

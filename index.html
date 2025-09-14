@@ -1,210 +1,191 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dinamita POS — Mini v2</title>
+  <title>Dinamita POS — v3</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<header class="app-header">
-  <div class="brand">
-    <span class="logo">💥</span>
-    <h1>Dinamita POS — Mini</h1>
+<div id="loginOverlay" class="overlay show">
+  <div class="overlay-card">
+    <h2>Acceso</h2>
+    <label>Rol</label>
+    <select id="loginRol"><option value="cajero">Cajero</option><option value="admin">Admin</option></select>
+    <label>PIN</label>
+    <input id="loginPin" type="password" placeholder="PIN" />
+    <button id="btnLogin">Entrar</button>
   </div>
-  <nav class="tabs">
-    <button class="tab-btn" data-tab="ventas">Ventas</button>
-    <button class="tab-btn" data-tab="productos">Productos</button>
-    <button class="tab-btn" data-tab="servicios">Servicios</button>
-    <button class="tab-btn" data-tab="compras">Compras</button>
-    <button class="tab-btn" data-tab="clientes">Clientes</button>
-    <button class="tab-btn" data-tab="reportes">Reportes</button>
-    <button class="tab-btn" data-tab="config">Config</button>
-  </nav>
+</div>
+
+<header class="topbar">
+  <button id="btnSidebar" class="ghost">☰</button>
+  <div class="brand"><span>💥</span><b>Dinamita POS</b> <small>v3</small></div>
+  <div class="top-actions"><span id="rolBadge" class="badge"></span></div>
 </header>
 
-<main>
-  <!-- VENTAS -->
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-header"><div class="logo">💥</div><div class="name">DINAMITA</div><button id="collapseBtn" class="ghost">⟨⟨</button></div>
+  <nav>
+    <button class="nav-btn" data-tab="ventas">🛒 Ventas</button>
+    <button class="nav-btn" data-tab="productos">📦 Productos</button>
+    <button class="nav-btn" data-tab="servicios">🎟️ Servicios</button>
+    <button class="nav-btn" data-tab="compras">📥 Compras</button>
+    <button class="nav-btn" data-tab="clientes">👥 Clientes</button>
+    <button class="nav-btn" data-tab="reportes">📊 Reportes</button>
+    <button class="nav-btn" data-tab="config">⚙️ Config</button>
+  </nav>
+</aside>
+
+<main id="content">
   <section id="ventas" class="tab active">
     <div class="panel">
-      <div class="row">
-        <input id="buscador" placeholder="Buscar por nombre, SKU o clave..." />
-        <input id="barcode" placeholder="Escáner de código de barras (Enter)" />
-      </div>
-      <h3>Catálogo</h3>
+      <div class="row"><select id="clienteVenta"></select><button id="nuevoClienteVenta">+ Cliente</button></div>
+      <div class="row"><input id="buscador" placeholder="Buscar por nombre, SKU o clave..." /><input id="barcode" placeholder="Escáner (Enter)" /></div>
       <div id="resultados" class="grid"></div>
       <div class="cart">
         <h3>Carrito</h3>
-        <table id="carritoTabla">
-          <thead><tr><th>Clave</th><th>Concepto</th><th>Cant</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <table id="carritoTabla"><thead><tr><th>Clave</th><th>Concepto</th><th>Cant</th><th>Precio</th><th>Sub</th><th></th></tr></thead><tbody></tbody></table>
+        <div class="row payments">
+          <div><b>Pagos</b></div>
+          <select id="metodoPago"><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option><option>Otro</option></select>
+          <input id="montoPago" type="number" step="0.01" placeholder="Monto" />
+          <button id="agregarPago">Agregar pago</button>
+          <div id="listaPagos"></div>
+        </div>
         <div class="totales">
           <div>Subtotal: $<span id="subtotal">0.00</span></div>
           <div>IVA (<span id="ivaPctLabel">0</span>%): $<span id="iva">0.00</span></div>
           <div class="total">TOTAL: $<span id="total">0.00</span></div>
+          <div class="total">Pagado: $<span id="pagado">0.00</span></div>
+          <div class="total">Cambio: $<span id="cambio">0.00</span></div>
         </div>
-        <div class="row">
-          <select id="metodoPago">
-            <option value="Efectivo">Efectivo</option>
-            <option value="Tarjeta">Tarjeta</option>
-            <option value="Transferencia">Transferencia</option>
-            <option value="Otro">Otro</option>
-          </select>
-          <input id="recibido" type="number" step="0.01" placeholder="Recibido (solo efectivo)" />
-          <button id="btnCobrar">Cobrar (F2)</button>
-          <button id="btnCancelar">Cancelar</button>
-        </div>
-      </div>
     </div>
+    <div class="paybar"><button id="btnCobrar">Cobrar (F2)</button><button id="btnCancelar">Cancelar</button></div>
   </section>
 
-  <!-- PRODUCTOS -->
   <section id="productos" class="tab">
     <div class="panel">
       <h2>Productos</h2>
       <form id="formProducto" class="grid-form">
-        <input name="sku" placeholder="SKU" required />
-        <input name="nombre" placeholder="Nombre" required />
+        <input name="sku" placeholder="SKU" required /><input name="nombre" placeholder="Nombre" required />
         <input name="costo" type="number" step="0.01" placeholder="Costo" required />
         <input name="precio" type="number" step="0.01" placeholder="Precio" required />
         <input name="stock" type="number" step="1" placeholder="Stock" required />
         <button>Guardar / Actualizar</button>
       </form>
-      <div class="row">
-        <input id="buscarProductos" placeholder="Buscar..." />
-        <button id="exportProductos">Exportar CSV</button>
-      </div>
-      <table id="tablaProductos">
-        <thead><tr><th>SKU</th><th>Nombre</th><th>Costo</th><th>Precio</th><th>Stock</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <div class="row"><input id="buscarProductos" placeholder="Buscar..." /><button id="exportProductos">Exportar CSV</button><label class="filebtn">Importar CSV<input type="file" id="importProductos" accept=".csv"></label></div>
+      <table id="tablaProductos"><thead><tr><th>SKU</th><th>Nombre</th><th>Costo</th><th>Precio</th><th>Stock</th><th></th></tr></thead><tbody></tbody></table>
     </div>
   </section>
 
-  <!-- SERVICIOS -->
   <section id="servicios" class="tab">
     <div class="panel">
       <h2>Servicios (Membresías)</h2>
       <form id="formServicio" class="grid-form">
-        <input name="clave" placeholder="Clave (ej. MES, SEM, VIS)" required />
-        <input name="nombre" placeholder="Nombre (Mensualidad, 6 meses, Anualidad...)" required />
-        <select name="tipo">
-          <option value="visita">Visita</option>
-          <option value="semana">Semana</option>
-          <option value="mes">Mensualidad</option>
-          <option value="6m">6 meses</option>
-          <option value="12m">Anualidad</option>
-          <option value="otro">Otro</option>
-        </select>
-        <input name="duracion_dias" type="number" placeholder="Duración (días)" />
-        <input name="precio" type="number" step="0.01" placeholder="Precio" required />
+        <input name="clave" placeholder="Clave" required /><input name="nombre" placeholder="Nombre" required />
+        <select name="tipo"><option value="visita">Visita</option><option value="semana">Semana</option><option value="mes">Mensualidad</option><option value="6m">6 meses</option><option value="12m">Anualidad</option><option value="otro">Otro</option></select>
+        <input name="duracion_dias" type="number" placeholder="Duración (días)" /><input name="precio" type="number" step="0.01" placeholder="Precio" required />
         <button>Guardar / Actualizar</button>
       </form>
-      <div class="row">
-        <input id="buscarServicios" placeholder="Buscar..." />
-        <button id="exportServicios">Exportar CSV</button>
-      </div>
-      <table id="tablaServicios">
-        <thead><tr><th>Clave</th><th>Nombre</th><th>Tipo</th><th>Días</th><th>Precio</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <div class="row"><input id="buscarServicios" placeholder="Buscar..." /><button id="exportServicios">Exportar CSV</button><label class="filebtn">Importar CSV<input type="file" id="importServicios" accept=".csv"></label></div>
+      <table id="tablaServicios"><thead><tr><th>Clave</th><th>Nombre</th><th>Tipo</th><th>Días</th><th>Precio</th><th></th></tr></thead><tbody></tbody></table>
     </div>
   </section>
 
-  <!-- COMPRAS -->
   <section id="compras" class="tab">
     <div class="panel">
       <h2>Compras (Entrada)</h2>
       <form id="formCompra" class="grid-form">
-        <input name="sku" placeholder="SKU existente" required />
-        <input name="cantidad" type="number" step="1" placeholder="Cantidad" required />
-        <input name="costo" type="number" step="0.01" placeholder="Costo unitario (opcional)" />
-        <button>Registrar Entrada</button>
+        <input name="sku" placeholder="SKU existente" required /><input name="cantidad" type="number" step="1" placeholder="Cantidad" required />
+        <input name="costo" type="number" step="0.01" placeholder="Costo unitario (opcional)" /><button>Registrar Entrada</button>
       </form>
       <div id="logCompras" class="list"></div>
     </div>
   </section>
 
-  <!-- CLIENTES -->
   <section id="clientes" class="tab">
     <div class="panel">
       <h2>Clientes</h2>
       <form id="formCliente" class="grid-form">
-        <input name="id" placeholder="ID (auto si vacío)" />
-        <input name="nombre" placeholder="Nombre" required />
-        <input name="telefono" placeholder="Teléfono" />
-        <input name="email" placeholder="Email" />
+        <input name="id" placeholder="ID (auto si vacío)" /><input name="nombre" placeholder="Nombre" required />
+        <input name="telefono" placeholder="Teléfono" /><input name="email" placeholder="Email" />
         <button>Guardar / Actualizar</button>
       </form>
-      <div class="row"><input id="buscarClientes" placeholder="Buscar..." /></div>
-      <table id="tablaClientes">
-        <thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Email</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <div class="row"><input id="buscarClientes" placeholder="Buscar..." /><button id="exportClientes">Exportar CSV</button><label class="filebtn">Importar CSV<input type="file" id="importClientes" accept=".csv"></label></div>
+      <table id="tablaClientes"><thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Email</th><th>Membresía</th><th>Vence</th><th></th></tr></thead><tbody></tbody></table>
     </div>
   </section>
 
-  <!-- REPORTES -->
   <section id="reportes" class="tab">
     <div class="panel">
-      <h2>Reportes</h2>
+      <h2>Reportes & Caja</h2>
       <div class="row">
-        <input id="desde" type="date" />
-        <input id="hasta" type="date" />
-        <button id="filtrarVentas">Filtrar</button>
-        <button id="exportVentas">Exportar Ventas CSV</button>
+        <input id="desde" type="date" /><input id="hasta" type="date" />
+        <button id="filtrarVentas">Filtrar</button><button id="exportVentas">Exportar Ventas CSV</button>
+        <button id="reimprimirUltimo">Reimprimir último ticket</button>
+        <button id="backupJSON">Respaldo JSON</button><label class="filebtn">Restaurar JSON<input type="file" id="restoreJSON" accept=".json"></label>
       </div>
-      <table id="tablaVentas">
-        <thead><tr><th>Folio</th><th>Fecha</th><th>Método</th><th>Total</th><th>Items</th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <table id="tablaVentas"><thead><tr><th>Folio</th><th>Fecha</th><th>Sucursal</th><th>Métodos</th><th>Total</th><th>Items</th></tr></thead><tbody></tbody></table>
+      <hr/><h3>Caja</h3>
+      <div class="row">
+        <input id="aperturaCaja" type="number" step="0.01" placeholder="Apertura" /><button id="btnAbrirCaja">Abrir Caja</button>
+        <input id="montoMov" type="number" step="0.01" placeholder="Monto" /><select id="tipoMov"><option>Entrada</option><option>Salida</option></select>
+        <input id="notaMov" placeholder="Nota" /><button id="btnMov">Registrar Movimiento</button>
+        <button id="corteX">Corte X</button><button id="corteZ">Corte Z (Reset)</button>
+      </div>
+      <div id="resumenCaja" class="list"></div>
     </div>
   </section>
 
-  <!-- CONFIG -->
   <section id="config" class="tab">
     <div class="panel">
       <h2>Config</h2>
       <form id="formConfig" class="grid-form">
         <input name="negocio" placeholder="Nombre del Negocio" />
+        <input name="sucursal_id" placeholder="ID Sucursal (opcional)" />
         <input name="direccion" placeholder="Dirección (ticket)" />
         <input name="telefono" placeholder="Teléfono (ticket)" />
-        <input name="iva_pct" type="number" step="0.01" placeholder="IVA %" />
-        <textarea name="pie" placeholder="Pie de ticket (ej. Gracias por su compra)"></textarea>
+        <input name="iva_pct" type="number" step="0.01" placeholder="IVA % (default 0)" />
+        <input name="folio_prefix" placeholder="Prefijo Folio (ej. DG-2025-)" />
+        <input name="logo_url" placeholder="URL Logo (ticket)" />
+        <input name="ticket_ancho_mm" type="number" step="1" placeholder="Ancho ticket mm (58 por default)" />
+        <input name="whatsapp" placeholder="WhatsApp (QR, 10 dígitos MX)" />
+        <textarea name="pie" placeholder="Pie de ticket"></textarea>
+        <input name="pin_admin" placeholder="PIN Admin" /><input name="pin_cajero" placeholder="PIN Cajero" />
         <button>Guardar</button>
       </form>
+      <div class="row"><button id="btnWebUSB">Conectar impresora (experimental)</button></div>
     </div>
   </section>
 </main>
 
-<!-- Ticket (oculto y con botón flotante) -->
 <button id="ticketToggle" class="ticket-toggle">🧾 Ticket</button>
 <section id="ticket" class="ticket hidden">
   <div class="ticket-paper" id="ticketPaper">
     <div class="t-header">
+      <img id="t-logo" style="max-width:100px;max-height:60px;display:none"/>
       <div id="t-negocio">Dinamita Gym</div>
+      <div id="t-sucursal"></div>
       <div id="t-direccion"></div>
       <div id="t-telefono"></div>
+      <div id="t-whatsapp"></div>
     </div>
-    <div id="t-folio"></div>
-    <div id="t-fecha"></div>
-    <table id="t-items">
-      <thead><tr><th>Cant</th><th>Desc</th><th>Precio</th><th>Sub</th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div id="t-folio"></div><div id="t-fecha"></div>
+    <table id="t-items"><thead><tr><th>Cant</th><th>Desc</th><th>Precio</th><th>Sub</th></tr></thead><tbody></tbody></table>
     <div class="t-totales">
       <div>Subtotal: $<span id="t-subtotal">0.00</span></div>
       <div>IVA: $<span id="t-iva">0.00</span></div>
       <div class="t-total">TOTAL: $<span id="t-total">0.00</span></div>
-      <div>Método: <span id="t-metodo"></span></div>
+      <div>Métodos: <span id="t-metodo"></span></div>
     </div>
+    <canvas id="qr" width="120" height="120" style="margin:auto"></canvas>
     <div id="t-pie">Gracias por su compra en Dinamita Gym 💥</div>
   </div>
 </section>
 
 <script src="app.js"></script>
+<script src="sw-register.js"></script>
 </body>
 </html>
