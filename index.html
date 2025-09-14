@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dinamita POS — Mini</title>
+  <title>Dinamita POS — Mini v2</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -17,6 +17,7 @@
   <nav class="tabs">
     <button class="tab-btn" data-tab="ventas">Ventas</button>
     <button class="tab-btn" data-tab="productos">Productos</button>
+    <button class="tab-btn" data-tab="servicios">Servicios</button>
     <button class="tab-btn" data-tab="compras">Compras</button>
     <button class="tab-btn" data-tab="clientes">Clientes</button>
     <button class="tab-btn" data-tab="reportes">Reportes</button>
@@ -29,19 +30,20 @@
   <section id="ventas" class="tab active">
     <div class="panel">
       <div class="row">
-        <input id="buscador" placeholder="Buscar por nombre o SKU..." />
+        <input id="buscador" placeholder="Buscar por nombre, SKU o clave..." />
         <input id="barcode" placeholder="Escáner de código de barras (Enter)" />
       </div>
+      <h3>Catálogo</h3>
       <div id="resultados" class="grid"></div>
       <div class="cart">
         <h3>Carrito</h3>
         <table id="carritoTabla">
-          <thead><tr><th>SKU</th><th>Producto</th><th>Cant</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead>
+          <thead><tr><th>Clave</th><th>Concepto</th><th>Cant</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
         <div class="totales">
           <div>Subtotal: $<span id="subtotal">0.00</span></div>
-          <div>IVA (0%): $<span id="iva">0.00</span></div>
+          <div>IVA (<span id="ivaPctLabel">0</span>%): $<span id="iva">0.00</span></div>
           <div class="total">TOTAL: $<span id="total">0.00</span></div>
         </div>
         <div class="row">
@@ -82,7 +84,37 @@
     </div>
   </section>
 
-  <!-- COMPRAS (entrada de inventario) -->
+  <!-- SERVICIOS -->
+  <section id="servicios" class="tab">
+    <div class="panel">
+      <h2>Servicios (Membresías)</h2>
+      <form id="formServicio" class="grid-form">
+        <input name="clave" placeholder="Clave (ej. MES, SEM, VIS)" required />
+        <input name="nombre" placeholder="Nombre (Mensualidad, 6 meses, Anualidad...)" required />
+        <select name="tipo">
+          <option value="visita">Visita</option>
+          <option value="semana">Semana</option>
+          <option value="mes">Mensualidad</option>
+          <option value="6m">6 meses</option>
+          <option value="12m">Anualidad</option>
+          <option value="otro">Otro</option>
+        </select>
+        <input name="duracion_dias" type="number" placeholder="Duración (días)" />
+        <input name="precio" type="number" step="0.01" placeholder="Precio" required />
+        <button>Guardar / Actualizar</button>
+      </form>
+      <div class="row">
+        <input id="buscarServicios" placeholder="Buscar..." />
+        <button id="exportServicios">Exportar CSV</button>
+      </div>
+      <table id="tablaServicios">
+        <thead><tr><th>Clave</th><th>Nombre</th><th>Tipo</th><th>Días</th><th>Precio</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- COMPRAS -->
   <section id="compras" class="tab">
     <div class="panel">
       <h2>Compras (Entrada)</h2>
@@ -107,9 +139,7 @@
         <input name="email" placeholder="Email" />
         <button>Guardar / Actualizar</button>
       </form>
-      <div class="row">
-        <input id="buscarClientes" placeholder="Buscar..." />
-      </div>
+      <div class="row"><input id="buscarClientes" placeholder="Buscar..." /></div>
       <table id="tablaClientes">
         <thead><tr><th>ID</th><th>Nombre</th><th>Teléfono</th><th>Email</th><th></th></tr></thead>
         <tbody></tbody>
@@ -142,6 +172,7 @@
         <input name="negocio" placeholder="Nombre del Negocio" />
         <input name="direccion" placeholder="Dirección (ticket)" />
         <input name="telefono" placeholder="Teléfono (ticket)" />
+        <input name="iva_pct" type="number" step="0.01" placeholder="IVA %" />
         <textarea name="pie" placeholder="Pie de ticket (ej. Gracias por su compra)"></textarea>
         <button>Guardar</button>
       </form>
@@ -149,8 +180,9 @@
   </section>
 </main>
 
-<!-- TICKET -->
-<section id="ticket" class="ticket">
+<!-- Ticket (oculto y con botón flotante) -->
+<button id="ticketToggle" class="ticket-toggle">🧾 Ticket</button>
+<section id="ticket" class="ticket hidden">
   <div class="ticket-paper" id="ticketPaper">
     <div class="t-header">
       <div id="t-negocio">Dinamita Gym</div>

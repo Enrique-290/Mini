@@ -3,7 +3,7 @@
   --bg:#0f0f12;
   --card:#17181c;
   --muted:#a8a8b3;
-  --accent:#e02424; /* rojo dinamita */
+  --accent:#e02424;
   --text:#f5f5f5;
 }
 *{box-sizing:border-box}
@@ -31,14 +31,20 @@ th,td{border-bottom:1px solid #2a2d35;padding:8px;text-align:left}
 .cart{margin-top:10px}
 .totales{display:flex;gap:16px;justify-content:flex-end;margin-top:8px}
 .totales .total{font-weight:bold}
-.ticket{position:fixed;right:12px;bottom:12px}
+
+/* Ticket */
+.ticket{position:fixed;right:12px;bottom:60px}
+.ticket.hidden{display:none}
 .ticket-paper{width:220px;background:white;color:black;padding:10px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.5)}
 .ticket-paper table{width:100%;font-size:12px}
 .ticket-paper .t-header{font-weight:bold;text-align:center;margin-bottom:6px}
 .ticket-paper .t-total{font-weight:bold}
+.ticket-toggle{position:fixed;right:12px;bottom:12px;background:#1e2026;border:1px solid #2a2d35;color:#fff;border-radius:20px;padding:10px 12px}
+
+/* Print */
 @media print{
   body{background:white}
-  header,main{display:none}
-  .ticket{position:static}
+  header,main,#ticketToggle{display:none}
+  .ticket{position:static;display:block}
   .ticket-paper{width:58mm;box-shadow:none}
 }
