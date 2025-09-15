@@ -1,1 +1,39 @@
-<!DOCTYPE html><html><head><title>Dinamita POS v3</title></head><body><h1>Dinamita POS v3</h1><p>App base lista.</p></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dinamita POS v3</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div id="login">
+    <h2>Iniciar Sesión</h2>
+    <input type="text" id="usuario" placeholder="Usuario" />
+    <input type="password" id="pin" placeholder="PIN" />
+    <button onclick="login()">Entrar</button>
+    <button onclick="resetPin()">Restablecer PIN</button>
+  </div>
+  <div id="app" style="display:none;">
+    <aside id="menu">
+      <button onclick="mostrar('ventas')">Ventas</button>
+      <button onclick="mostrar('productos')">Productos</button>
+      <button onclick="mostrar('servicios')">Servicios</button>
+      <button onclick="mostrar('compras')">Compras</button>
+      <button onclick="mostrar('clientes')">Clientes</button>
+      <button onclick="mostrar('reportes')">Reportes</button>
+      <button onclick="mostrar('config')">Config</button>
+    </aside>
+    <main id="contenido">
+      <h1>Bienvenido a Dinamita POS v3</h1>
+      <div id="ventas" class="seccion">Módulo de Ventas</div>
+      <div id="productos" class="seccion">Módulo de Productos</div>
+      <div id="servicios" class="seccion">Módulo de Servicios</div>
+      <div id="compras" class="seccion">Módulo de Compras</div>
+      <div id="clientes" class="seccion">Módulo de Clientes</div>
+      <div id="reportes" class="seccion">Módulo de Reportes</div>
+      <div id="config" class="seccion">Módulo de Configuración</div>
+    </main>
+  </div>
+</body>
+</html>

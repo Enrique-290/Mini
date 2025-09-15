@@ -1,1 +1,8 @@
-body { font-family: sans-serif; background: #111; color: #eee; }
+body {margin:0; font-family:Arial; background:#111; color:#eee;}
+#login {padding:20px; max-width:300px; margin:auto;}
+#app {display:flex;}
+#menu {width:200px; background:#222; padding:10px; display:flex; flex-direction:column;}
+#menu button {margin:5px 0; padding:10px; background:#444; color:#fff; border:none; cursor:pointer;}
+#menu button:hover {background:#666;}
+#contenido {flex:1; padding:20px;}
+.seccion {display:none;}
